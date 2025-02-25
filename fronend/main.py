@@ -13,6 +13,7 @@ class App:
 
     def start(self):
         self.ui.mainloop()
+        self.ui.ser.SerialClose()
 
 
 if __name__ == "__main__":
