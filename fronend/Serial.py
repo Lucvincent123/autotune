@@ -34,12 +34,13 @@ class Serial:
 
     def SerialClose(self):
         """Fermer la connection"""
-        try:
-            self.ser.is_open
-            self.ser.close()
-            self.ser.status = False
-        except:
-            self.ser.status = False
+        if self.ser:
+            try:
+                self.ser.is_open
+                self.ser.close()
+                self.ser.status = False
+            except:
+                self.ser.status = False
 
     def write(self, msg):
         """envoyer une commande (en bytes) à arduino"""
