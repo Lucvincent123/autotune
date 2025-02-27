@@ -35,9 +35,9 @@ class UI(tk.Tk):
 
     def create_com_control(self):
         self.frame_com = tk.LabelFrame(self, text="Com Manager", bg=self["bg"], font=("MonoLisa", 13))
-        self.frame_com.pack()
+        self.frame_com.pack(pady=10)
         self.refresh_btn = tk.Button(self.frame_com, text="Refresh", width=10, command=self.refresh_cmd, bg="#04aa6d", activebackground='#e7700d', fg="white", activeforeground="white")
-        self.connect_btn = tk.Button(self.frame_com, text="Connect", width=10, state="disabled", command=self.connect_cmd, bg="#04aa6d", activebackground='#e7700d', fg="white", activeforeground="white", disabledforeground="red")
+        self.connect_btn = tk.Button(self.frame_com, text="Connect", width=10, command=self.connect_cmd, bg="#04aa6d", activebackground='#e7700d', fg="white", activeforeground="white", disabledforeground="red", state="disabled")
         self.com_widget()
         bds = ["-", "9600", "115200"]
         self.clicked_bd = tk.StringVar()
@@ -57,7 +57,7 @@ class UI(tk.Tk):
 
     def create_key_control(self):
         self.frame_key = tk.LabelFrame(self, text="Key Manager", bg=self["bg"], font=("MonoLisa", 13))
-        self.frame_key.pack()
+        self.frame_key.pack(pady=10)
 
 
         self.key = tk.StringVar()
@@ -70,26 +70,28 @@ class UI(tk.Tk):
         self.G_button = tk.Radiobutton(self.frame_key, text="G", variable=self.key, value="G", background=self["bg"], command=self.change_key)
         self.A_button = tk.Radiobutton(self.frame_key, text="A", variable=self.key, value="A", background=self["bg"], command=self.change_key)
         self.B_button = tk.Radiobutton(self.frame_key, text="B", variable=self.key, value="B", background=self["bg"], command=self.change_key)
-        self.C_button.pack()
-        self.D_button.pack()
-        self.E_button.pack()
-        self.F_button.pack()
-        self.G_button.pack()
-        self.A_button.pack()
-        self.B_button.pack()
+        self.C_button.pack(anchor="w")
+        self.D_button.pack(anchor="w")
+        self.E_button.pack(anchor="w")
+        self.F_button.pack(anchor="w")
+        self.G_button.pack(anchor="w")
+        self.A_button.pack(anchor="w")
+        self.B_button.pack(anchor="w")
 
     def create_offset_control(self):
         self.offset = tk.IntVar()
         self.frame_offset = tk.LabelFrame(self, text="Offset Manager", bg=self["bg"], font=("MonoLisa", 13))
-        self.frame_offset.pack()
-        self.offset_scale = tk.Scale(self.frame_offset, variable=self.offset, from_=-24, to=48, orient="horizontal", troughcolor="#04aa6d", command=self.change_offset)
-        self.offset_scale.pack()
+        self.frame_offset.pack(pady=10)
+        # self.offset_scale = tk.Scale(self.frame_offset, variable=self.offset, from_=-24, to=48, orient="horizontal", troughcolor="#04aa6d", command=self.change_offset)
+        # self.offset_scale.pack()
         self.offset_entry = tk.Entry(self.frame_offset, textvariable=str(self.offset))
         self.offset_entry.pack()
+        self.offset_button = tk.Button(self.frame_offset, text="Submit", command=self.change_offset)
+        self.offset_button.pack()
 
     def create_effect_control(self):
         self.frame_effect = tk.LabelFrame(self, text="Effect Manager", bg=self["bg"], font=("MonoLisa", 13))
-        self.frame_effect.pack()
+        self.frame_effect.pack(pady=10)
         self.on_echo = tk.IntVar()
         self.echo_checkbutton = tk.Checkbutton(self.frame_effect, text="Echo", variable=self.on_echo, onvalue = 1, offvalue = 0, bg=self["bg"], command=self.change_echo)
         self.echo_checkbutton.pack()
@@ -104,10 +106,11 @@ class UI(tk.Tk):
         self.drop_com = tk.OptionMenu(self.frame_com, self.clicked_com, *self.ser.ports, command=self.com_ctrl)
         self.drop_com.config(width=10)
 
-    def com_ctrl(self):
+    def com_ctrl(self, other):
         """activer le connect button quand on saisit le port et le baudrate"""
         if "-" in self.clicked_com.get() or "-" in self.clicked_bd.get():
-            pass
+            self.connect_btn["state"] = "disabled"
+            # pass
         else: # tous saisir
             self.connect_btn["state"] = "normal"
 
@@ -145,9 +148,13 @@ class UI(tk.Tk):
         print(self.key.get())
         self.ser.write(self.key.get())
 
-    def change_offset(self, value):
+    def change_offset(self):
         print(self.offset.get())
-        print("value",value)
+        self.ser.write("offset "+ str(self.offset.get()))
 
     def change_echo(self):
-        print(self.on_echo.get())
+        if self.on_echo.get():
+            print("echo")
+        else:
+            print("notecho")
+        # print("echo"+str(self.on_echo.get()))
