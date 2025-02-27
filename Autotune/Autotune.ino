@@ -108,15 +108,16 @@ void setup() {
   notefreq.begin(.15);
   audioShield.enable();
   audioShield.inputSelect(AUDIO_INPUT_MIC); 
-  audioShield.micGain(1);
-  audioShield.volume(1);
-  
+  audioShield.micGain(30);
+  audioShield.volume(0.8);
+  pitchShifter.setParamValue("thresh", -50 );
   patchCord2.disconnect();   //Disconnect echo cord
   patchCord3.disconnect();
   Serial.println("Choisissez la cle: C, D, E, F, G, A, B");
   
 }
-float volume = 0.5;
+int autotune = 1;
+float volume ;
 int offset = 0;
 float frequencyToMIDI(double frequency) {
     return (69 + 12 * log2(frequency / 440.0));
@@ -159,7 +160,7 @@ void loop() {
       patchCord3.disconnect();
       patchCord0.connect();
     }
-     else if (command.indexOf("volume") >= 0) {
+    else if (command.indexOf("volume") >= 0) {
       int index = command.indexOf(" ");
       if (index != -1){
         index ++;
@@ -169,10 +170,16 @@ void loop() {
         Serial.printf("volume set = %.2f",volume);
       }
     }
+    else if (command == "turnon"){
+      autotune = 1;   //Turn on autotune
+    }
+    else if (command == "turnoff"){
+      autotune = 0;   //Turn off autotune
+    }
     Serial.println("Change completed");
   }
-  pitchShifter.setParamValue("thresh", -50 );
-  if (notefreq.available()) {
+
+  if (notefreq.available() and (autotune == 1)) {
         float note= notefreq.read();
         // if ((note < 100)){
         //   return;
